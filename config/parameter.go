@@ -9,10 +9,15 @@ const (
 
 // Parameter contains a exame
 type Parameter struct {
-	input *Input
-	Name  string `json:"guc"`
-	value interface{}
-	Type  OutputType `json:"type"`
+	input        *Input
+	value        interface{}
+	Name         string      `json:"guc"`
+	VisibleValue interface{} `json:"value"`
+	Type         OutputType  `json:"-"`
+}
+
+func (p *Parameter) setValue() {
+	p.VisibleValue = format(p.Type, p.value)
 }
 
 // ToSQL exports the parameter using the `ALTER SYSTEM` syntax

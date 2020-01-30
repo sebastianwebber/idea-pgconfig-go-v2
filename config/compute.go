@@ -1,8 +1,8 @@
 package config
 
 // Compute does the magic
-func (i *Input) Compute() *[]Category {
-	var output []Category
+func (i *Input) Compute() *Output {
+	var output Output
 
 	if i.PostgresVersion == 0 {
 		i.PostgresVersion = PGVersion
@@ -11,11 +11,18 @@ func (i *Input) Compute() *[]Category {
 	memory := Category{
 		Name: "Resource Usage / Memory",
 	}
-	memory.Parameters = append(memory.Parameters,
-		sharedBuffers(i),
-		maxConnections(i))
 
-	output = append(output, memory)
+	sBuffers := sharedBuffers(i)
+	sBuffers.setValue()
+
+	mConn := maxConnections(i)
+	mConn.setValue()
+	memory.Parameters = append(memory.Parameters,
+		sBuffers,
+		mConn)
+
+	output.Data = append(output.Data, memory)
+
 	return &output
 }
 

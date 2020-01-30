@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/davecgh/go-spew/spew"
@@ -19,14 +20,14 @@ func main() {
 	fmt.Println("\n=== SQL OUTPUT =================")
 	printSQL(output)
 
-	// fmt.Println("\n=== JSON OUTPUT ================")
-	// printSQL(output)
+	fmt.Println("\n=== JSON OUTPUT ================")
+	printJSON(output)
 
 }
 
-func printSQL(output *[]config.Category) {
+func printSQL(output *config.Output) {
 
-	for _, cat := range *output {
+	for _, cat := range output.Data {
 		fmt.Printf("\n... %s ................\n", cat.Name)
 
 		for _, param := range cat.Parameters {
@@ -34,4 +35,14 @@ func printSQL(output *[]config.Category) {
 			fmt.Printf("%s\n\n", param.ToSQL())
 		}
 	}
+}
+
+func printJSON(output *config.Output) {
+
+	b, err := json.Marshal(output)
+	if err != nil {
+		panic(err)
+		return
+	}
+	fmt.Println(string(b))
 }
