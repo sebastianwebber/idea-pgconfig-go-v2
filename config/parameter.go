@@ -9,7 +9,7 @@ const (
 
 // Parameter contains a exame
 type Parameter struct {
-	input Input
+	input *Input
 	Name  string `json:"guc"`
 	value interface{}
 	Type  OutputType `json:"type"`
@@ -22,5 +22,5 @@ func (p *Parameter) ToSQL() string {
 
 // DocURL compute the documentation url
 func (p *Parameter) DocURL() string {
-	return fmt.Sprintf("https://postgresqlco.nf/en/doc/param/%s/%.0f/", p.Name, p.input.PostgresVersion)
+	return fmt.Sprintf("https://postgresqlco.nf/en/doc/param/%s/%0.f/", p.Name, p.input.PostgresVersion)
 }

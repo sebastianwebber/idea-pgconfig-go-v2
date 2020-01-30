@@ -4,9 +4,12 @@ package config
 type OutputType int
 
 const (
-	// Bytes formats the output using human bytes syntax
-	Bytes OutputType = iota
-
 	// Text formats the output as a regular string
-	Text
+	Text OutputType = iota
+
+	// Bytes formats the output using human bytes syntax
+	Bytes
+
+	// Number formats the output using human bytes syntax
+	Number
 )

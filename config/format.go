@@ -11,6 +11,10 @@ func format(t OutputType, value interface{}) string {
 		return humanBytes(value.(uint64))
 	}
 
+	if t == Number {
+		return fmt.Sprintf("%d", value)
+	}
+
 	return fmt.Sprintf("%s", value)
 }
 

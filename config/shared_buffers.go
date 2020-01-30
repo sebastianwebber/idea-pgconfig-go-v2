@@ -11,7 +11,9 @@ const (
 func sharedBuffers(i *Input) Parameter {
 
 	out := Parameter{
-		Name: "shared_buffers",
+		input: i,
+		Name:  "shared_buffers",
+		Type:  Bytes,
 	}
 
 	var paramValue uint64 = i.TotalRAM / 4
