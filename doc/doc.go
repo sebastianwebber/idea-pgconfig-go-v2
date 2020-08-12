@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -16,9 +17,11 @@ type ParamDoc struct {
 	DocURL         string
 	ConfURL        string
 	Recomendations string
+	ParamType      string
 }
 
-func formatVer(ver float32) string {
+// FormatVer fixes the postgres versioning system and results a valid version
+func FormatVer(ver float32) string {
 	if ver < 10 {
 		return fmt.Sprintf("%.1f", ver)
 	}
@@ -30,7 +33,7 @@ func formatVer(ver float32) string {
 func Get(param string, ver float32) (ParamDoc, error) {
 
 	var out ParamDoc
-	out.ConfURL = fmt.Sprintf("https://postgresqlco.nf/en/doc/param/%s/%s/", param, formatVer(ver))
+	out.ConfURL = fmt.Sprintf("https://postgresqlco.nf/en/doc/param/%s/%s/", param, FormatVer(ver))
 
 	res, err := http.Get(out.ConfURL)
 
@@ -51,20 +54,38 @@ func Get(param string, ver float32) (ParamDoc, error) {
 	// title
 	sel := doc.Find("body > div.wrapper > div > section.content-header > div > div.col-md-8 > h1.parameter-title")
 	for i := range sel.Nodes {
-		out.Title = sel.Eq(i).Text()
+
+		sel.Eq(i).Children().Remove()
+
+		out.Title = t(sel.Eq(i).Text())
+	}
+
+	// type
+	sel = doc.Find("body > div.wrapper > div > section.content > div > div.col-md-8 > div.box.box-info > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > code")
+
+	for i := range sel.Nodes {
+
+		finalType := t(sel.Eq(i).Text())
+
+		if finalType == "real" {
+			out.ParamType = "floating point"
+			continue
+		}
+
+		out.ParamType = finalType
 	}
 
 	// short desc
 	sel = doc.Find("body > div.wrapper > div > section.content > div > div.col-md-8 > div.box.box-solid.box-primary > div:nth-child(1) > strong")
 	for i := range sel.Nodes {
-		out.ShortDesc = sel.Eq(i).Text()
+		out.ShortDesc = t(sel.Eq(i).Text())
 	}
 
 	// doc text
 	sel = doc.Find("body > div.wrapper > div > section.content > div > div.col-md-8 > div.box.box-solid.box-primary > div.box-body > p")
 	for i := range sel.Nodes {
 
-		out.Text = append(out.Text, sel.Eq(i).Text())
+		out.Text = append(out.Text, t(sel.Eq(i).Text()))
 	}
 
 	// doc url?
@@ -80,8 +101,12 @@ func Get(param string, ver float32) (ParamDoc, error) {
 	// recomendations
 	sel = doc.Find("body > div.wrapper > div > section.content > div > div.col-md-8 > div:nth-child(3) > div.box-body")
 	for i := range sel.Nodes {
-		out.Recomendations = sel.Eq(i).Text()
+		out.Recomendations = t(sel.Eq(i).Text())
 	}
 
 	return out, nil
+}
+
+func t(i string) string {
+	return strings.TrimSpace(i)
 }
