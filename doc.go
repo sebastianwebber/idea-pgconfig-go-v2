@@ -15,7 +15,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&targetFolder, "target-folder", "/home/seba/projetos/pessoal/go-pgconfig/pg_doc", "default target docs")
+	flag.StringVar(&targetFolder, "target-folder", "/home/seba/projetos/github.com/sebastianwebber/pgconfig-api/pg_doc", "default target docs")
 	flag.Parse()
 }
 
@@ -64,6 +64,7 @@ func main() {
 		10.0,
 		11.0,
 		12.0,
+		13.0,
 	}
 
 	allParams := []string{
